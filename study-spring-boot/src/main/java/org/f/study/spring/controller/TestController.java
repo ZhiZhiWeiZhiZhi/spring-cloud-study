@@ -2,12 +2,15 @@ package org.f.study.spring.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.f.study.spring.common.api.ApiVersion;
+import org.f.study.spring.common.exception.BusinessException;
 import org.f.study.spring.common.model.TDataTypeTest;
 import org.f.study.spring.common.service.TDataTypeTestService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -17,18 +20,40 @@ import java.util.List;
  * @author f
  * @date 2019/3/20 11:16
  **/
-@Controller
+@Slf4j
+@RestController
+@RequestMapping("/{version}/test")
 public class TestController {
 
     @Autowired
     private TDataTypeTestService tDataTypeTestService;
 
-    @RequestMapping(value = "/")
+    @RequestMapping(value = "/listPage")
     @ResponseBody
-    void hello(){
+    void listPage(){
         PageHelper.startPage(3, 2);
         List<TDataTypeTest> list= tDataTypeTestService.selectAll();
         PageInfo<TDataTypeTest> pageInfo = new PageInfo<TDataTypeTest>(list);
         System.out.println("总条数："+pageInfo.getTotal());
+    }
+
+    @ApiVersion(1)
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    String test1(){
+        Integer a=10;
+        Integer b=a/0;
+        log.info(b.toString());
+        return "test1";
+    }
+
+    @ApiVersion(2)
+    @RequestMapping(value = "/test")
+    @ResponseBody
+    String test2(){
+        if(1==1) {
+            throw new BusinessException("自定义业务异常");
+        }
+        return "test2";
     }
 }
