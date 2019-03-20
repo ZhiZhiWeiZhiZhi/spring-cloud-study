@@ -1,18 +1,36 @@
 package org.f.study.spring.common.base;
 
 
+import org.f.study.spring.common.util.DateUtil;
+import org.f.study.spring.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by f on 2017/9/19.
  */
 
 public abstract class BaseServiceImpl<T> implements BaseService<T> {
+
     @Autowired
     private Mapper<T> mapper;
+
+    @Override
+    public int save(T t) {
+        BaseModel baseModel = (BaseModel)t;
+        baseModel.setUpdateTime(DateUtil.now());
+        if(StringUtil.isEmpty(baseModel.getId())) {
+            baseModel.setCreateTime(DateUtil.now());
+            baseModel.setId(UUID.randomUUID().toString());
+            return mapper.insertSelective(t);
+        }else {
+            return mapper.updateByPrimaryKeySelective(t);
+        }
+    }
+
     @Override
     public int deleteByPrimaryKey(Object o) {
         return mapper.deleteByPrimaryKey(o);

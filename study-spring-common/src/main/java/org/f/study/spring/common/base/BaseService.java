@@ -6,6 +6,15 @@ import java.util.List;
  * Created by f on 2017/9/19.
  */
 public interface BaseService<T>{
+
+    /**
+     * 保存和修改合成一个方法，根据id是否为空判断是否是新增还是修改
+     * 自动设置UUID
+     * @param t
+     * @return
+     */
+    int save(T t);
+
     int deleteByPrimaryKey(Object o);
     int delete(T t);
     int insert(T t);
