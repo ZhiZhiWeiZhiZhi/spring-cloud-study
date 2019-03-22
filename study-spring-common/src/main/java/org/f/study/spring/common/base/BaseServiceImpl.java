@@ -5,6 +5,7 @@ import org.f.study.spring.common.util.DateUtil;
 import org.f.study.spring.common.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +30,23 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
         }else {
             return mapper.updateByPrimaryKeySelective(t);
         }
+    }
+
+    @Override
+    public T selectOneSafe(T t) {
+        Example example=new Example(t.getClass());
+        example.createCriteria().andEqualTo(t);
+        example.orderBy("createTime").asc();
+        List list = mapper.selectByExample(example);
+        return list.size()>0? (T) list.get(0) :null;
+    }
+
+    @Override
+    public int deleteByPrimaryKeySafe(T t) {
+        BaseModel baseModel = ((BaseModel)t);
+        baseModel.setIsDeleted("1");
+        baseModel.setUpdateTime(DateUtil.now());
+        return mapper.updateByPrimaryKeySelective(t);
     }
 
     @Override

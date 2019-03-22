@@ -37,4 +37,11 @@ public class TDataTypeTest extends BaseModel {
     private Date dataTypeTimestamp;
 
 
+
+    public TDataTypeTest(){
+    }
+
+    public TDataTypeTest(String id){
+        this.setId(id);
+    }
 }

@@ -15,6 +15,22 @@ public interface BaseService<T>{
      */
     int save(T t);
 
+    /**
+     * 安全获取，多个时获取创建时间最早的一个
+     * @param t
+     * @return
+     */
+    T selectOneSafe(T t);
+
+
+    /**
+     * 安全删除，修改deleteState=1
+     * @param t
+     * @return
+     */
+    int deleteByPrimaryKeySafe(T t);
+
+
     int deleteByPrimaryKey(Object o);
     int delete(T t);
     int insert(T t);

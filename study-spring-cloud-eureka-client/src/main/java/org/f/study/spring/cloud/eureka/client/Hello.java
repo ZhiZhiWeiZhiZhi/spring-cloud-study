@@ -26,6 +26,8 @@ public class Hello {
 
     @RequestMapping("/hello")
     public String hello(@RequestParam String name) {
+
+        System.out.println("eueka-client");
         return "hi "+name+",I am from port:" +port;
     }
 

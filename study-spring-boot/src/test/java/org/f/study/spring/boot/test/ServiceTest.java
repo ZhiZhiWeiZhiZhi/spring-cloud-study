@@ -1,4 +1,4 @@
-package org.f.study.spring;
+package org.f.study.spring.boot.test;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -16,7 +16,8 @@ import java.util.List;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class Base {
+public class ServiceTest {
+
     @Autowired
     private TDataTypeTestService tDataTypeTestService;
 
@@ -25,12 +26,20 @@ public class Base {
         PageHelper.startPage(3, 2);
         List<TDataTypeTest> list= tDataTypeTestService.selectAll();
         PageInfo<TDataTypeTest> pageInfo = new PageInfo<TDataTypeTest>(list);
-        System.out.println("总条数："+pageInfo.getTotal());
+        log.info(pageInfo.toString());
     }
+
     @Test
     public void save() {
         TDataTypeTest tDataTypeTest = new TDataTypeTest();
-        tDataTypeTestService.save(tDataTypeTest);
-        log.info("ok");
+        int rowNum = tDataTypeTestService.save(tDataTypeTest);
+        log.info("保存条数" + rowNum);
+    }
+
+    @Test
+    public void deleteSave(){
+       TDataTypeTest tDataTypeTest = new TDataTypeTest("172db213-a950-4816-8b83-b70038e68b16");
+       int rowNum = tDataTypeTestService.deleteByPrimaryKeySafe(tDataTypeTest );
+       log.info("删除条数" + rowNum);
     }
 }

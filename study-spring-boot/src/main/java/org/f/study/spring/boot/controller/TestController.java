@@ -1,4 +1,4 @@
-package org.f.study.spring.controller;
+package org.f.study.spring.boot.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -30,17 +30,17 @@ public class TestController {
 
     @RequestMapping(value = "/listPage")
     @ResponseBody
-    void listPage(){
-        PageHelper.startPage(3, 2);
+    public String listPage(Integer pageNum,Integer pageSize){
+        PageHelper.startPage(pageNum, pageSize);
         List<TDataTypeTest> list= tDataTypeTestService.selectAll();
         PageInfo<TDataTypeTest> pageInfo = new PageInfo<TDataTypeTest>(list);
-        System.out.println("总条数："+pageInfo.getTotal());
+        return pageInfo.toString();
     }
 
     @ApiVersion(1)
     @RequestMapping(value = "/test")
     @ResponseBody
-    String test1(){
+    public String test1(){
         Integer a=10;
         Integer b=a/0;
         log.info(b.toString());
@@ -50,7 +50,7 @@ public class TestController {
     @ApiVersion(2)
     @RequestMapping(value = "/test")
     @ResponseBody
-    String test2(){
+    public String test2(){
         if(1==1) {
             throw new BusinessException("自定义业务异常");
         }
