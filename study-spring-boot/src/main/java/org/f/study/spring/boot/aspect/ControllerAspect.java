@@ -3,11 +3,8 @@ package org.f.study.spring.boot.aspect;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.f.study.spring.common.util.LogUtil;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * description
@@ -20,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class ControllerAspect {
 
+    ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     @Pointcut("execution(public * org.f.study.spring.boot.controller.*.*(..))")
     public void cut(){
@@ -27,18 +25,11 @@ public class ControllerAspect {
 
     @Before("cut()")
     public void doBefore(JoinPoint joinPoint){
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request =  attributes.getRequest();
-        //url
-        log.info("url ={}",request.getRequestURI());
-        //method
-        log.info("method={}",request.getMethod());
-        //ip
-        log.info("ip={}",request.getRemoteAddr());
-        //类方法
-        log.info("class_method={}",joinPoint.getSignature().getDeclaringTypeName()+'.'+ joinPoint.getSignature().getName());//获取类名及类方法
-        //参数
-        log.info("args={}",joinPoint.getArgs());
+        startTime.set(System.currentTimeMillis());
+        log.info(LogUtil.logStrBegin);
+        String classMethod = "请求类及方法名:" + joinPoint.getSignature().getDeclaringTypeName() +
+                "." + joinPoint.getSignature().getName();
+        LogUtil.requestLogInfo(classMethod);
     }
 
     /**
@@ -53,6 +44,8 @@ public class ControllerAspect {
      */
     @AfterReturning(returning = "obj",pointcut = "cut()")
     public void doAfterReturning(Object obj){
-        log.info("response={}",obj);
+        log.info("返回值:{}",obj);
+        log.info("耗时:{}",System.currentTimeMillis()-startTime.get()+"ms");
+        log.info(LogUtil.logStrEnd);
     }
 }

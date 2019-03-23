@@ -2,6 +2,7 @@ package org.f.study.spring.common.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.f.study.spring.common.result.Result;
+import org.f.study.spring.common.util.LogUtil;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +19,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Result exceptionHandler(Exception e){
+        LogUtil.requestLogError();
         if (e instanceof BusinessException) {
             Result result = ((BusinessException) e).getResult();
             log.error("business_error_code:" + result.getCode());
