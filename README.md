@@ -17,6 +17,7 @@
    2. spring-cloud-eureka-server 注册服务
    3. spring-cloud-feign-client 服务消费者
 5. common模块设计
+6. 统一入参出参打印
 
 ## 项目成长日志
 
