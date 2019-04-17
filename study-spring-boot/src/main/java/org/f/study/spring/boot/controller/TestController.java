@@ -8,6 +8,9 @@ import org.f.study.spring.common.exception.BusinessException;
 import org.f.study.spring.common.model.TDataTypeTest;
 import org.f.study.spring.common.service.TDataTypeTestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,6 +26,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/{version}/test")
+@RefreshScope
 public class TestController {
 
     @Autowired
@@ -55,5 +59,13 @@ public class TestController {
             throw new BusinessException("自定义业务异常");
         }
         return "test2";
+    }
+
+    @Value("${profile}")
+    private String profile;
+
+    @GetMapping("/profile")
+    public String profile(){
+        return this.profile;
     }
 }

@@ -18,9 +18,12 @@
    3. spring-cloud-feign-client 服务消费者
 5. common模块设计
 6. 统一入参出参打印
+7. 配置中心，手动刷新后自动更新配置，运用spring-cloud-starter-bus-amqp + rabbitMQ
 
 ## 项目成长日志
 
 ### 2019.03.20 增加
 1. 全局统一异常处理
 2. api版本控制
+### 2019.03.20 增加
+1. 配置中心 + 手动刷新更新配置文件

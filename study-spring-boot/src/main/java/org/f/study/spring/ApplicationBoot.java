@@ -8,7 +8,6 @@ import tk.mybatis.spring.annotation.MapperScan;
 /**
  * @author f
  */
-
 @SpringBootApplication
 @MapperScan(basePackages = "org.f.study.spring.common.mapper")
 public class ApplicationBoot {
