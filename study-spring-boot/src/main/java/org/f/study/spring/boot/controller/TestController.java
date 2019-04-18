@@ -61,11 +61,19 @@ public class TestController {
         return "test2";
     }
 
-    @Value("${profile}")
-    private String profile;
+    @Value("${db.config.name}")
+    private String dbConfigName;
 
-    @GetMapping("/profile")
-    public String profile(){
-        return this.profile;
+    @GetMapping("/dbConfigName")
+    public String dbConfigName(){
+        return this.dbConfigName;
+    }
+
+    @Value("${log.config.name}")
+    private String logConfigName;
+
+    @GetMapping("/logConfigName")
+    public String logConfigName(){
+        return this.logConfigName;
     }
 }
