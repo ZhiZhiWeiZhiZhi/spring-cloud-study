@@ -3,6 +3,7 @@ package org.f.study.spring.boot.controller;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.f.study.spring.common.annotation.LogSet;
 import org.f.study.spring.common.api.ApiVersion;
 import org.f.study.spring.common.exception.BusinessException;
 import org.f.study.spring.common.model.TDataTypeTest;
@@ -10,10 +11,7 @@ import org.f.study.spring.common.service.TDataTypeTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,6 +30,20 @@ public class TestController {
     @Autowired
     private TDataTypeTestService tDataTypeTestService;
 
+    @LogSet(requestLog = true,responseLog = false)
+    @RequestMapping(value = "/requestLog")
+    @ResponseBody
+    public String requestLog(){
+        return "requestLog.";
+    }
+
+    @LogSet(requestLog = false,responseLog = true)
+    @RequestMapping(value = "/responseLog")
+    @ResponseBody
+    public String responseLog(){
+        return "responseLog.";
+    }
+
     @RequestMapping(value = "/listPage")
     @ResponseBody
     public String listPage(Integer pageNum,Integer pageSize){
@@ -41,23 +53,35 @@ public class TestController {
         return pageInfo.toString();
     }
 
-    @ApiVersion(1)
-    @RequestMapping(value = "/test")
+    @RequestMapping(value = "/sysException")
     @ResponseBody
-    public String test1(){
+    public String sysException(){
         Integer a=10;
         Integer b=a/0;
         log.info(b.toString());
+        return "sysException";
+    }
+
+    @RequestMapping(value = "/myException")
+    @ResponseBody
+    public String myException(){
+        if(1==1) {
+            throw new BusinessException("自定义业务异常");
+        }
+        return "test2";
+    }
+
+    @ApiVersion(1)
+    @RequestMapping(value = "/apiVersion")
+    @ResponseBody
+    public String apiVersion1(){
         return "test1";
     }
 
     @ApiVersion(2)
-    @RequestMapping(value = "/test")
+    @RequestMapping(value = "/apiVersion")
     @ResponseBody
-    public String test2(){
-        if(1==1) {
-            throw new BusinessException("自定义业务异常");
-        }
+    public String apiVersion2(){
         return "test2";
     }
 

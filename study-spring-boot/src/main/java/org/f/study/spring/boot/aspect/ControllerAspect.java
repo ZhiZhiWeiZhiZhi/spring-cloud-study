@@ -3,8 +3,12 @@ package org.f.study.spring.boot.aspect;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.f.study.spring.common.annotation.LogSet;
 import org.f.study.spring.common.util.LogUtil;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Method;
 
 /**
  * description
@@ -23,13 +27,13 @@ public class ControllerAspect {
     public void cut(){
     }
 
+    @Pointcut("@annotation(org.f.study.spring.common.annotation.LogSet)")
+    public void cut2(){
+    }
+
     @Before("cut()")
     public void doBefore(JoinPoint joinPoint){
         startTime.set(System.currentTimeMillis());
-        log.info(LogUtil.logStrBegin);
-        String classMethod = "请求类及方法名:" + joinPoint.getSignature().getDeclaringTypeName() +
-                "." + joinPoint.getSignature().getName();
-        LogUtil.requestLogInfo(classMethod);
     }
 
     /**
@@ -42,10 +46,13 @@ public class ControllerAspect {
      * 在调用上面 @Pointcut标注的方法后执行。用于获取返回值
      * @param obj
      */
-    @AfterReturning(returning = "obj",pointcut = "cut()")
-    public void doAfterReturning(Object obj){
-        log.info("返回值:{}",obj);
-        log.info("耗时:{}",System.currentTimeMillis()-startTime.get()+"ms");
-        log.info(LogUtil.logStrEnd);
+    @AfterReturning(returning = "obj",pointcut = "cut() || cut2()")
+    public void doAfterReturning(JoinPoint joinPoint,Object obj){
+        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        Method method = signature.getMethod();
+        LogSet logSet = method.getAnnotation(LogSet.class);
+        Long time = System.currentTimeMillis() - startTime.get();
+        startTime.remove();
+        LogUtil.requestLogInfo(obj,time,logSet);
     }
 }

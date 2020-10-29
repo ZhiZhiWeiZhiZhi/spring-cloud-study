@@ -19,22 +19,22 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public Result exceptionHandler(Exception e){
-        LogUtil.requestLogError();
+        String uuid = LogUtil.requestLogError();
         if (e instanceof BusinessException) {
             Result result = ((BusinessException) e).getResult();
-            log.error("business_error_code:" + result.getCode());
-            log.error("business_error_msg:" + result.getMsg());
-            log.error("business_error_object:" + result.getObject());
+            log.error(uuid + " business_error_code:" + result.getCode());
+            log.error(uuid + " business_error_msg:" + result.getMsg());
+            log.error(uuid + " business_error_object:" + result.getObject());
             return result;
         } else {
-            log.error("system_error", e);
+            log.error("{} system_error",uuid, e);
             if(log.isDebugEnabled()) {
                 return Result.fail("系统异常，请您联系管理员！</br>" +
                         e.getStackTrace()[0].getFileName() + "</br>" +
                         e.getStackTrace()[0].getLineNumber() + "</br>" +
                         e.toString());
             }
-            return Result.success("系统异常，请您联系管理员！");
+            return Result.fail("系统异常，请您联系管理员！");
         }
     }
 }

@@ -2,12 +2,14 @@ package org.f.study.spring.common.util;
 
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.f.study.spring.common.annotation.LogSet;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author f
@@ -15,40 +17,41 @@ import java.util.Map;
 @Slf4j
 public class LogUtil {
 
-    public final static String logStrBegin = "-------------------------请求开始-------------------------";
-    public final static String logStrEnd = "-------------------------请求完成-------------------------";
 
-
-    public static void requestLogInfo(String classMethod) {
+    public static void requestLogInfo(Object returnObj, Long time, LogSet logSet) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request =  attributes.getRequest();
-        log.info(requestPath(request));
-        log.info(requestMethod(request));
-        log.info(classMethod);
-        log.info(requestClient(request));
-        log.info(requestArgs(request));
+        String uuid = UUID.randomUUID().toString();
+
+        boolean requestLog = null == logSet || (null != logSet && logSet.requestLog());
+        if(requestLog) {
+            log.info(uuid + " url:{}", requestUrl(request));
+            log.info(uuid + " from:{}", requestClient(request));
+            log.info(uuid + " RequestParam:{}", requestArgs(request));
+        }
+        boolean responseLog = null == logSet || (null != logSet && logSet.responseLog());
+        if(responseLog) {
+            log.info(uuid + " return:{}", returnObj);
+        }
+        log.info(uuid + " time:{}", time + "ms");
     }
-    public static void requestLogError() {
+    public static String requestLogError() {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request =  attributes.getRequest();
-
-        log.error(requestPath(request));
-        log.error(requestMethod(request));
-        log.error(requestClient(request));
-        log.error(requestArgs(request));
+        String uuid = UUID.randomUUID().toString();
+        log.info(uuid + " url:{}" , requestUrl(request));
+        log.info(uuid + " from:{}" , requestClient(request));
+        log.info(uuid + " RequestParam:{}" , requestArgs(request));
+        return uuid;
     }
 
-    public static String requestMethod(HttpServletRequest request) {
-        return "HTTP 请求方法:" + request.getMethod();
-    }
-
-    public static String requestPath(HttpServletRequest request) {
-        return "请求地址:" + request.getRequestURL();
+    public static String requestUrl(HttpServletRequest request) {
+        return request.getMethod() + " " + request.getRequestURL();
     }
 
     public static String requestClient(HttpServletRequest request) {
-        return "请求客户端:" + "Time:" + DateUtil.now()
-                + " , IP:" + HttpUtil.getIpAddress(request)
+        return "from:"
+                + "IP:" + HttpUtil.getIpAddress(request)
                 + " , Agent:" + HttpUtil.getUserAgent(request);
     }
 
@@ -71,8 +74,15 @@ public class LogUtil {
                 map.put("newpassword", "***");
             }
         }
-        return "请求参数:" + JSON.toJSONString(map);
+        return "" + JSON.toJSONString(map);
     }
 
+    public static String replaceEmail(String str){
+        return str.replaceAll("(?<=\\w{3})(\\w+)(?=@\\w+)", "****");
+    }
+
+    public static String replacePassword(String str){
+        return str.replaceAll("password.*?([,}$])", "password=****,");
+    }
 
 }
